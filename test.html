@@ -37,18 +37,34 @@
     // <div class='selected-inline' name='selected-inline'><label><input type='checkbox' value='0'>0</label></div>
     str_checkbox = [ "<div class='selected-inline' name='selected-inline'><label><input type='checkbox' checked value='", 0, "'>", 0, "</label></div>"]
     // str_checkbox.join("")
-    $group = $("#selected-group").children()
-    $('label').filter('.checkbox-inline').each(function(i, v){
-      $(v).click(function(){
+    var mapping = function(val, $el){
+      var t = null
+      $el.each(function(i, v){
+        if($(v).find('input[type="checkbox"]').val() === val){
+          t = v
+          return
+        } 
+      })
+      return t
+    }
+    $sel_group = $("#selected-group").children()
+    $cdd_group = $('label').filter('.checkbox-inline')
+    $cdd_group.each(function(i, v){
+      $(v).on('click', function(){
         $chk = $(this).children()
         if($chk.prop('checked')){
-          str_checkbox[1] = str_checkbox[3] = $chk.val()
-          $group.append(str_checkbox.join(""))
+          str_checkbox[1] = $chk.val()
+          str_checkbox[3] = $chk.parent().text()
+          $sel_group.append(str_checkbox.join(""))
         }else{
-          $group.children().filter('value=["'+$chk.val()+'"]')
+          // $sel_group.children().filter('value="'+$chk.val()+'"')
         }
       });
     });
+    $(".selected-inline").on('click', 'label', function(){
+      $t = $(this).find('input[type="checkbox"]')
+      mapping($t.val(), $("#checkboxes-group").children())
+    })
     $("#test").click(function(){
     $("#popup_shading").show();       
     $( "#dialog" ).dialog({
