@@ -14,7 +14,6 @@
   <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
   <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  <link rel="stylesheet" href="/resources/demos/style.css">
   <link rel="stylesheet" type="text/css" href="layer.css"/>
   <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
 <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
@@ -35,36 +34,43 @@
   <script>
   $(function() {
     // <div class='selected-inline' name='selected-inline'><label><input type='checkbox' value='0'>0</label></div>
-    str_checkbox = [ "<div class='selected-inline' name='selected-inline'><label><input type='checkbox' checked value='", 0, "'>", 0, "</label></div>"]
+    str_checkbox = [ "<div class='selected-inline' name='selected-inline'><label class='selected-label'><input type='checkbox' value='", 0, "'>", 0, "</label></div>"]
     // str_checkbox.join("")
     var mapping = function(val, $el){
       var t = null
       $el.each(function(i, v){
         if($(v).find('input[type="checkbox"]').val() === val){
-          t = v
-          return
+          t = $(v)
+          return false
         } 
       })
       return t
     }
+    var linkage =  function($this ,$els_group){
+      $t = $this.find('input[type="checkbox"]')
+      $div = mapping($t.val(),$els_group)
+      $che = $div.find('input[type="checkbox"]')
+      $che.prop('checked', !$che.prop('checked'))
+      return $div
+    }
     $sel_group = $("#selected-group").children()
-    $cdd_group = $('label').filter('.checkbox-inline')
-    $cdd_group.each(function(i, v){
-      $(v).on('click', function(){
-        $chk = $(this).children()
-        if($chk.prop('checked')){
-          str_checkbox[1] = $chk.val()
-          str_checkbox[3] = $chk.parent().text()
-          $sel_group.append(str_checkbox.join(""))
-        }else{
-          // $sel_group.children().filter('value="'+$chk.val()+'"')
-        }
-      });
-    });
-    $(".selected-inline").on('click', 'label', function(){
-      $t = $(this).find('input[type="checkbox"]')
-      mapping($t.val(), $("#checkboxes-group").children())
+    $che_group = $("#checkboxes-group").children()
+    $sel_group.on('click', 'label', function(){
+      linkage($(this), $che_group.children(), true)
+      $(this).parent().remove()
     })
+    $che_group.on('change', 'label', function(){
+      $chk = $(this).children()
+      if($chk.prop('checked')){
+        str_checkbox[1] = $chk.val()
+        str_checkbox[3] = $chk.parent().text()
+        $sel_group.append(str_checkbox.join(""))
+        linkage($(this), $sel_group.children())
+      }else{
+        $div = linkage($(this), $sel_group.children())
+        $div.parent().parent().remove()
+      }
+    }) 
     $("#test").click(function(){
     $("#popup_shading").show();       
     $( "#dialog" ).dialog({
@@ -74,7 +80,7 @@
     });
     })
 
-  });
+  });                                                                                           
   </script>
 </head>
 <body>
@@ -93,35 +99,23 @@
           </div>       
         </div>
         <div id="selected-group">      
-          <div class="dy-controls">                   
-            <div class="selected-inline" name="100" id="$11">                           
-                <label for="1">             
-                </label>            
-            </div>           
-            <div class="selected-inline" name="100" id="$2">             
-                <label for="2">             
-                </label>                         
-            </div>           
-            <div class="selected-inline" name="100" id="$3">             
-                <label for="3">             
-                </label>              
-            </div>             
+          <div class="dy-controls">          
           </div>
         </div>
         <div id="checkboxes-group">      
-          <div class="controls">                   
+          <div class="controls">                  
             <div class="checkbox-inline" name="100" id="123">                           
-                <label class="checkbox-inline" for="1">             
+                <label class="checkbox-label" for="1">             
                   <input type="checkbox" value="1@1" id="1">1
                 </label>            
             </div>           
             <div class="checkbox-inline" name="100" id="$2">             
-                <label class="checkbox-inline" for="2">             
+                <label class="checkbox-label" for="2">             
                   <input type="checkbox" value="2@2" id="2">2
                 </label>                         
             </div>           
             <div class="checkbox-inline" name="100" id="$3">             
-                <label class="checkbox-inline" for="3">             
+                <label class="checkbox-label" for="3">             
                   <input type="checkbox" value="3@3" id="3">3
                 </label>              
             </div>             
