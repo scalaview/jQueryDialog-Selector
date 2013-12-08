@@ -16,9 +16,10 @@
   <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
   <link rel="stylesheet" type="text/css" href="layer.css"/>
   <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+  <script type="text/javascript" src="dialog-selector.js"></script>
 <script src="http://cdn.bootcss.com/twitter-bootstrap/3.0.2/js/bootstrap.min.js"></script>
 <style>
-#popup_shading {
+#black_block {
     background: none repeat scroll 0 0 #000000;
     display: block;
     height: 100%;
@@ -31,96 +32,18 @@
     //z-index: 9999;
 }
 </style>
-  <script>
-  $(function() {
-    // <div class='selected-inline' name='selected-inline'><label><input type='checkbox' value='0'>0</label></div>
-    str_checkbox = [ "<div class='selected-inline' name='selected-inline'><label class='selected-label'><input type='checkbox' value='", 0, "'>", 0, "</label></div>"]
-    // str_checkbox.join("")
-    var mapping = function(val, $el){
-      var t = null
-      $el.each(function(i, v){
-        if($(v).find('input[type="checkbox"]').val() === val){
-          t = $(v)
-          return false
-        } 
-      })
-      return t
-    }
-    var linkage =  function($this ,$els_group){
-      $t = $this.find('input[type="checkbox"]')
-      $div = mapping($t.val(),$els_group)
-      $che = $div.find('input[type="checkbox"]')
-      $che.prop('checked', !$che.prop('checked'))
-      return $div
-    }
-    $sel_group = $("#selected-group").children()
-    $che_group = $("#checkboxes-group").children()
-    $sel_group.on('click', 'label', function(){
-      linkage($(this), $che_group.children(), true)
-      $(this).parent().remove()
-    })
-    $che_group.on('change', 'label', function(){
-      $chk = $(this).children()
-      if($chk.prop('checked')){
-        str_checkbox[1] = $chk.val()
-        str_checkbox[3] = $chk.parent().text()
-        $sel_group.append(str_checkbox.join(""))
-        linkage($(this), $sel_group.children())
-      }else{
-        $div = linkage($(this), $sel_group.children())
-        $div.parent().parent().remove()
-      }
-    }) 
-    $("#test").click(function(){
-    $("#popup_shading").show();       
-    $( "#dialog" ).dialog({
-      width: 500,
-      height: 333,
-      close: function(event, ui){$("#popup_shading").hide();}
-    });
-    })
-
-  });                                                                                           
+  <script>       
+ $(function() {
+  $("#test").dialogSelector({
+    data: [{ text: 1, val: 1}, {text:2, val:2}]
+  });
+});
+                                                                                     
   </script>
 </head>
 <body>
- <input type='button' id='test' value='demo'>
-<div id="popup_shading"></div>
-<div id="dialog" title="Basic dialog" style='display:none'>
-    <div class="box">   
-        <div id="divSelecting">         
-          <div class="form-inline">            
-            <span id="selectingHeader"></span>
-            <div class="form-group">
-              <label class="sr-only" for="exampleInputEmail2">Product Name</label>
-              <input type="text" class="form-control" id="exampleInputEmail2" placeholder="Enter product">
-            </div>
-            <button type="submit" class="btn btn-default">Search</button>     
-          </div>       
-        </div>
-        <div id="selected-group">      
-          <div class="dy-controls">          
-          </div>
-        </div>
-        <div id="checkboxes-group">      
-          <div class="controls">                  
-            <div class="checkbox-inline" name="100" id="123">                           
-                <label class="checkbox-label" for="1">             
-                  <input type="checkbox" value="1@1" id="1">1
-                </label>            
-            </div>           
-            <div class="checkbox-inline" name="100" id="$2">             
-                <label class="checkbox-label" for="2">             
-                  <input type="checkbox" value="2@2" id="2">2
-                </label>                         
-            </div>           
-            <div class="checkbox-inline" name="100" id="$3">             
-                <label class="checkbox-label" for="3">             
-                  <input type="checkbox" value="3@3" id="3">3
-                </label>              
-            </div>             
-          </div>
-        </div>     
+  <div id='test'>
+ <input type='button'  value='demo'>
 </div>
 </div>
  
