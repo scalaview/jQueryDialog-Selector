@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>jQuery UI Dialog - Default functionality</title>
+  <title>jQuery UI Dialog Selector</title>
   <link rel="stylesheet" href="http://cdn.bootcss.com/twitter-bootstrap/3.0.2/css/bootstrap.min.css">
 
 <!-- 可选的Bootstrap主题文件（一般不用引入） -->
@@ -34,15 +34,15 @@
 </style>
   <script>       
  $(function() {
-  $("#test").dialogSelector({
-    data: [{ text: 1, val: 1}, {text:2, val:2}]
+  $("#demo").dialogSelector({
+    dataOptions: [{ text: 7, val: 7}, {text:2, val:2}],
   });
 });
                                                                                      
   </script>
 </head>
 <body>
-  <div id='test'>
+  <div id='demo'>
  <input type='button'  value='demo'>
 </div>
 </div>

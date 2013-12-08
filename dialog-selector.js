@@ -1,5 +1,6 @@
 (function ($) {
-  
+  var che_options = []
+
   var buildElemntHtml = function(for_text, input_tips, but_text){
     var $block = $('<div/>', {
       id : "black_block"
@@ -41,7 +42,7 @@
   } 
 
   var str_checkbox = [ "<div class='selected-inline'><label class='selected-label'><input type='checkbox' value='", 0, "'>", 0, "</label></div>"]
-  
+
   var mapping = function(val, $el){
       var t = null
       $el.each(function(i, v){
@@ -61,7 +62,7 @@
     return $div
   }
 
-  var initfun = function(){
+  var initEventBinding = function(){
     var $sel_group = $("#selected-group").children()
     var $che_group = $("#checkboxes-group").children()
     $sel_group.on('click', 'label', function(){
@@ -82,31 +83,71 @@
     return { sel: $sel_group, che: $che_group}
   }
 
-  var dialogBuilder = function($this, options){
+  var itemBuilder = function(data, $target){
+    $.each(data, function(i, e){
+      if(itemFilter(e)){
+        $('<div/>', {
+          class: "checkbox-inline"
+        }).append($('<label/>', {
+              class : "checkbox-label",
+              for : e.val
+            })
+            .text(e.text)
+            .prepend($('<input type="checkbox" value='+ e.val +'>'))
+            ).appendTo($target)
+        che_options.push($.trim(e.val) + '-' + $.trim(e.text))
+      }
+    })
+  }
+
+  var itemFilter = function(e){
+    var flag = true;
+    $.each(che_options, function(i, v){
+      if($.trim(e.val) + '-' + $.trim(e.text) === v){
+        flag = false;
+        return;
+      }
+    })
+    return flag
+  }
+
+  var regFinder = function($source, reg){
+    $.each($source.children(), function(i, e){
+      if($(e).find('label').text().search(reg) === -1){
+        $(e).hide()
+      }else{
+        $(e).show()
+      }
+    })
+  }
+  
+  var searchChanger = function($input, options, $node){
+    if(options.ajax.url){
+        $input.on('change', function(event){
+          $this = $(this)
+          var ajaxOption = $.extend(true, {data: {'terms': $this.val()}}, options.ajax)
+          $.ajax(ajaxOption)
+        })
+    }else{
+      $input.on('change', function(event){
+          $this = $(this)
+          regFinder($node, $this.val())
+        })
+    }
+  }
+
+  var initialization = function($this, options){
     if(!$this.find('div[id="black_block"]').length || !$this.find('div[id="gen_dialog"]').length || !$this.find('div[id="selected-group"]').length || !$this.find('div[id="checkboxes-group"]').length){
       $.each(buildElemntHtml(options.for_text, options.input_tips, options.but_text), function(i, e){
         $(e).appendTo($this)
       });
     }
-    var init = initfun();
+    var init = initEventBinding();
     var $sel_group = init.sel,  $che_group = init.che;
-    itemBuilder(options.data, $che_group)
+    itemBuilder(options.dataOptions, $che_group)
+    searchChanger($("#search_input"), options, $che_group)
   }
-
-  var itemBuilder = function(data, $target){
-    $.each(data, function(i, e){
-      $('<div/>', {
-        class: "checkbox-inline"
-      }).append($('<label/>', {
-            class : "checkbox-label",
-            for : e.val
-          })
-          .text(e.text)
-          .prepend($('<input type="checkbox" value='+ e.val +'>'))
-          ).appendTo($target)
-    })
-  }
-
+  
   return $.fn.dialogSelector = function(options, callBack) {
       var defaults = {
         for_text: 'Demo',
@@ -116,15 +157,27 @@
         line_count: 4,
         width: 500,
         height: 333,
-        data: [],
-        close: function(event, ui){$("#black_block").hide()},
-        type: 'GET',
-        url: '',
-        dataType: 'json',
+        dataOptions: [],
+        close: function(event, ui){$("#black_block").hide()}, //不能被覆盖
+        ajax : {
+          type: 'GET',
+          url: '',
+          dataType: 'json',
+          success: function(data){
+             var items = callBack != null ? callBack(data) : data
+             var $node = $("#checkboxes-group").children()
+             itemBuilder(items, $node)
+             regFinder($node, $("#search_input").val())
+          },
+          error : function(xhr, status) {
+              console.log("xhr: "+ xhr+", status: "+ status)
+          },
+        },
       }
+
       var $this = $(this)
-      options = $.extend(defaults, options);
-      dialogBuilder($this, options)
+      options = $.extend(true, defaults, options);
+      initialization($this, options)
       $this.click(function(){
           $("#black_block").show();       
           $("#gen_dialog" ).dialog({
