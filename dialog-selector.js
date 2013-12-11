@@ -88,11 +88,11 @@
     return { sel: $sel_group, che: $che_group}
   }
 
-  var itemBuilder = function(data, $target){
+  var itemBuilder = function(data, $target, item_num){
     $.each(data, function(i, e){
       if(itemFilter(e)){
         $('<div/>', {
-          class: "pure-u-1-5"
+          class: "pure-u-1" + (item_num > 1 ? '-' + item_num : "")
         }).append($('<label/>', {
               class : "pure-checkbox",
               for : e.val
@@ -149,7 +149,7 @@
     }
     var init = initEventBinding();
     var $sel_group = init.sel,  $che_group = init.che;
-    itemBuilder(options.dataOptions, $che_group)
+    itemBuilder(options.dataOptions, $che_group, options.item_num)
     searchChanger($("#search_input"), options, $che_group)
   }
   
