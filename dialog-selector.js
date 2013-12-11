@@ -1,7 +1,7 @@
 (function ($) {
   var che_options = []
 
-  var buildElemntHtml = function(for_text, input_tips, but_text){
+  var buildElemntHtml = function(for_text, input_tips, but_text, paginator){
     var $block = $('<div/>', {
       id : "black_block"
     })
@@ -12,36 +12,41 @@
       .append($('<div/>', {
          id : "divSelecting",
         }).append($('<div/>', { 
-              class : "form-inline"
+              class : "pure-form pure-g"
             })
             .append($('<span id="selectingHeader"></span>'))
-            .append($('<div/>', {class : "form-group"})
-                  .append($('<label/>', {
-                    class : "sr-only", 
-                    for : for_text,
-                  }).html('Product Name'))
+            .append($('<div/>', {class : "pure-u-1"})
                   .append($('<input/>', {
                     type : "text", 
-                    class : "form-control",
+                    class : "pure-input-3-4",
                     id : "search_input",
-                    placeholder : input_tips,
-                  })))
-              .append($('<button/>', {
+                    placeholder : input_tips, }))
+                  .append($('<button/>', {
                 type : "submit", 
-                class : "btn btn-default",
-              }).html(but_text)))))
+                class : "pure-button",
+              }).html(but_text))))).append(paginator))
 
     var $sel_ = $('<div/>', {
               id : "selected-group",
-            }).append($('<div class="dy-controls"></div>')).appendTo($dialog)
+            }).append($('<div class="pure-g-r"></div>')).appendTo($dialog)
     var $che_ = $('<div/>', {
                 id : "checkboxes-group",
-              }).append('<div class="controls"></div>').appendTo($dialog)
+              }).append('<div class="pure-g-r"></div>').appendTo($dialog)
 
     return [$block, $dialog]
   } 
 
-  var str_checkbox = [ "<div class='selected-inline'><label class='selected-label'><input type='checkbox' value='", 0, "'>", 0, "</label></div>"]
+  var str_checkbox = [ "<div class='pure-u-1-5'><label class='pure-checkbox'><input type='checkbox' value='", 0, "'>", 0, "</label></div>"]
+
+  var paginator = function(){
+    return $('<div/>', {
+          class: 'pure-u-1', 
+        }).append($('<ul/>', {
+          class: 'pure-paginator', style: 'float: right'})
+          .append($('<li><a id="prev" class="pure-button prev" href="#">&#171;</a></li>'))
+          .append($('<li><a id="next" class="pure-button next" href="#">&#187;</a></li>')))
+
+  }
 
   var mapping = function(val, $el){
       var t = null
@@ -87,9 +92,9 @@
     $.each(data, function(i, e){
       if(itemFilter(e)){
         $('<div/>', {
-          class: "checkbox-inline"
+          class: "pure-u-1-5"
         }).append($('<label/>', {
-              class : "checkbox-label",
+              class : "pure-checkbox",
               for : e.val
             })
             .text(e.text)
@@ -138,7 +143,7 @@
 
   var initialization = function($this, options){
     if(!$this.find('div[id="black_block"]').length || !$this.find('div[id="gen_dialog"]').length || !$this.find('div[id="selected-group"]').length || !$this.find('div[id="checkboxes-group"]').length){
-      $.each(buildElemntHtml(options.for_text, options.input_tips, options.but_text), function(i, e){
+      $.each(buildElemntHtml(options.for_text, options.input_tips, options.but_text, options.dataOptions.length > options.item_num * options.line_count ? paginator : null), function(i, e){
         $(e).appendTo($this)
       });
     }
